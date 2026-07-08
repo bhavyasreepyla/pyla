@@ -1,0 +1,104 @@
+# A neural network with backpropagation -- written entirely in Pyla.
+#
+# There are NO libraries doing the heavy lifting: even exp() and the random
+# number generator are implemented in Pyla itself (see pyla/std/math.pyla and
+# pyla/std/rand.pyla). This program is pure Pyla all the way down.
+#
+# It learns XOR, the classic proof-of-life for neural networks: XOR is not
+# linearly separable, so a network can only solve it by learning a useful
+# intermediate representation in its hidden layer via backpropagation. If the
+# four predictions come out right, real gradient descent happened.
+
+let math = import("std/math");
+let rand = import("std/rand");
+
+let sigmoid = math.sigmoid;
+
+# --- data: the XOR truth table -------------------------------------------
+let X = [[0, 0], [0, 1], [1, 0], [1, 1]];
+let Y = [0, 1, 1, 0];
+
+# --- network shape: 2 inputs -> H hidden (sigmoid) -> 1 output (sigmoid) --
+let H = 4;
+let lr = 0.5;
+let epochs = 4000;
+
+let rng = rand.uniform(7);   # deterministic init; same seed => same result
+
+# weights: W1[i][j] connects input i to hidden j; W2[j] connects hidden j to output
+let W1 = [];
+for (let i = 0; i < 2; i = i + 1) {
+    let row = [];
+    for (let j = 0; j < H; j = j + 1) { push(row, rng()); }
+    push(W1, row);
+}
+let b1 = [];
+for (let j = 0; j < H; j = j + 1) { push(b1, rng()); }
+let W2 = [];
+for (let j = 0; j < H; j = j + 1) { push(W2, rng()); }
+let b2 = rng();
+
+# forward pass: returns [hidden_activations, output]
+let forward = fn(x) {
+    let h = [];
+    for (let j = 0; j < H; j = j + 1) {
+        let net = b1[j];
+        for (let i = 0; i < 2; i = i + 1) { net = net + x[i] * W1[i][j]; }
+        push(h, sigmoid(net));
+    }
+    let net_o = b2;
+    for (let j = 0; j < H; j = j + 1) { net_o = net_o + h[j] * W2[j]; }
+    return [h, sigmoid(net_o)];
+};
+
+# --- training loop: online stochastic gradient descent -------------------
+print("Training a 2-", H, "-1 network on XOR (", epochs, "epochs)...");
+for (let e = 0; e < epochs; e = e + 1) {
+    let total_loss = 0.0;
+    for (let n = 0; n < len(X); n = n + 1) {
+        let x = X[n];
+        let t = Y[n];
+
+        let out = forward(x);
+        let h = out[0];
+        let o = out[1];
+        total_loss = total_loss + (o - t) * (o - t);
+
+        # output-layer gradient (mean-squared error through the sigmoid)
+        let delta_o = 2.0 * (o - t) * o * (1.0 - o);
+        # hidden-layer gradients (backpropagate through W2 and each sigmoid)
+        let delta_h = [];
+        for (let j = 0; j < H; j = j + 1) {
+            push(delta_h, delta_o * W2[j] * h[j] * (1.0 - h[j]));
+        }
+
+        # descend
+        for (let j = 0; j < H; j = j + 1) {
+            W2[j] = W2[j] - lr * delta_o * h[j];
+        }
+        b2 = b2 - lr * delta_o;
+        for (let j = 0; j < H; j = j + 1) {
+            for (let i = 0; i < 2; i = i + 1) {
+                W1[i][j] = W1[i][j] - lr * delta_h[j] * x[i];
+            }
+            b1[j] = b1[j] - lr * delta_h[j];
+        }
+    }
+    if (e % 1000 == 0) { print("  epoch", e, " loss", total_loss); }
+}
+
+# --- results --------------------------------------------------------------
+print("");
+print("Learned XOR:");
+let correct = 0;
+for (let n = 0; n < len(X); n = n + 1) {
+    let x = X[n];
+    let o = forward(x)[1];
+    let guess = if (o > 0.5) { 1 } else { 0 };
+    if (guess == Y[n]) { correct = correct + 1; }
+    print("  ", x[0], "XOR", x[1], "=", guess, " (raw", o, ", want", Y[n], ")");
+}
+print("");
+print(correct, "/ 4 correct");
+assert(correct == 4, "network failed to learn XOR");
+print("A neural network, trained by backprop, running on a language -- all written in that language. fr fr no cap.");

@@ -134,8 +134,9 @@ optional. `if`/`else` is an expression and produces a value.
 path), evaluates it, and returns its top-level bindings as a hash. Paths
 resolve relative to the importing file, falling back to the interpreter's
 bundled library. The standard library ships with `std/list` (map, filter,
-reduce, sort_by, zip, ...) and `std/math` (sqrt, pow, gcd, factorial,
-is_prime, ...) — both written in Pyla itself.
+reduce, sort_by, zip, ...), `std/math` (sqrt, pow, gcd, factorial, is_prime,
+and from-scratch `exp`/`tanh`/`sigmoid`), and `std/rand` (a seeded,
+deterministic PRNG) — all written in Pyla itself.
 
 ### Control flow
 ```
@@ -223,6 +224,8 @@ matching, auto-indent and comment toggling for `.pyla` and `.fr` files.
 - `examples/pipelines.pyla` — the `|>` operator doing what it does best
 - `examples/brainrot.fr` — the Gen Z dialect, in its natural habitat
 - `examples/brainfuck.pyla` — a Brainfuck interpreter written *in Pyla*
+- `examples/neural_net.pyla` — a neural network with backpropagation that
+  learns XOR, written entirely in Pyla (the RNG and `exp` are too)
 
 ## Credits
 

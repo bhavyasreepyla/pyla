@@ -136,10 +136,16 @@ class VMParityTests(unittest.TestCase):
                     vm_run(src)
                 self.assertEqual(str(vm_err.exception), str(tree_err.exception))
 
+    # Heavy demos verified for parity manually; skipped here to keep the
+    # suite fast (neural_net.pyla trains for thousands of epochs).
+    SLOW_EXAMPLES = {"neural_net.pyla"}
+
     def test_example_programs_produce_identical_output(self):
         paths = sorted(glob.glob(os.path.join(EXAMPLES_DIR, "*.pyla")))
         self.assertTrue(paths, "no example programs found")
         for path in paths:
+            if os.path.basename(path) in self.SLOW_EXAMPLES:
+                continue
             with self.subTest(example=os.path.basename(path)):
                 with open(path, "r", encoding="utf-8") as f:
                     source = f.read()

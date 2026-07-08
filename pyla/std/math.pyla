@@ -75,6 +75,37 @@ let clamp = fn(x, lo, hi) {
     return x;
 };
 
+# e^x, from scratch: reduce the argument until it is small, sum the Taylor
+# series there, then undo the reduction by repeated squaring. Accurate and
+# stable across the whole range (negatives via the reciprocal).
+let exp = fn(x) {
+    if (x < 0) { return 1.0 / exp(0 - x); }
+    let y = float(x);
+    let squarings = 0;
+    while (y > 0.5) {
+        y = y / 2.0;
+        squarings = squarings + 1;
+    }
+    let term = 1.0;
+    let sum = 1.0;
+    for (let i = 1; i < 20; i = i + 1) {
+        term = term * y / i;
+        sum = sum + term;
+    }
+    for (let i = 0; i < squarings; i = i + 1) { sum = sum * sum; }
+    return sum;
+};
+
+# Hyperbolic tangent, a common neural-network activation.
+let tanh = fn(x) {
+    let a = exp(x);
+    let b = exp(0 - x);
+    return (a - b) / (a + b);
+};
+
+# Logistic sigmoid, squashes any real number into (0, 1).
+let sigmoid = fn(x) { 1.0 / (1.0 + exp(0 - x)) };
+
 let is_prime = fn(n) {
     if (n < 2) { return false; }
     if (n < 4) { return true; }

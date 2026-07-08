@@ -7,6 +7,11 @@ Pyla source code. Everything is pure Python; the only third-party dependency
 is numpy (used by tinylm only, never by Pyla). DESIGN.md records the design
 rationale and the language-failure post-mortems v0.3 was built against.
 
+Published to PyPI as `pyla-lang`; source at https://github.com/bhavyasreepyla/pyla
+(gh CLI is authenticated as bhavyasreepyla; `git push` works). Roadmap: doing
+the "big flex" features in order — neural-net-in-Pyla (DONE, v0.5.0), then a
+self-hosted Pyla interpreter, then a Pyla-to-custom-CPU compiler.
+
 ## Build / run
 
 Pyla is installed editable (`pip install -e .`), so the `pyla` command is on
@@ -50,8 +55,12 @@ line/col and a `pyla_stack` for tracebacks), `pyla/diagnostics.py`
 `pyla/modules.py` (import: cached by absolute path, resolves relative to
 importing file then the bundled `pyla/std/`), `pyla/cli.py` (the `pyla`
 entry point; packaging in `pyproject.toml`). The stdlib in `pyla/std/*.pyla`
-is written in Pyla; its functions take the collection as FIRST parameter so
-they compose with `|>` — keep that convention. `editor/vscode-pyla` is the
+is written in Pyla (std/list, std/math, std/rand); its functions take the
+collection as FIRST parameter so they compose with `|>` — keep that
+convention. std/math has from-scratch exp/tanh/sigmoid; std/rand is a seeded
+LCG (Pyla has no built-in RNG, by design, so results stay deterministic).
+`examples/neural_net.pyla` trains an MLP on XOR via hand-written backprop,
+entirely in Pyla. `editor/vscode-pyla` is the
 VS Code extension (also copied into ~/.vscode/extensions). `tinylm.py` is
 standalone (Bengio-2003 MLP char model, manual backprop).
 

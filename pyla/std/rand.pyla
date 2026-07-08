@@ -1,0 +1,43 @@
+# std/rand -- a seeded pseudo-random generator, written in Pyla.
+#
+# Pyla has no built-in randomness on purpose (so program output stays
+# reproducible). When you genuinely want a random-looking sequence, this
+# module gives you one that is fully deterministic: the same seed always
+# produces the same stream. It's a classic linear congruential generator.
+#
+# Usage:
+#   let rand = import("std/rand");
+#   let r = rand.floats(42);   r();  r();   # floats in [0, 1)
+
+let MODULUS = 2147483648;      # 2^31
+let MULTIPLIER = 1103515245;
+let INCREMENT = 12345;
+
+# Raw generator: a closure yielding integers in [0, MODULUS).
+let ints = fn(seed) {
+    let state = seed % MODULUS;
+    if (state < 0) { state = state + MODULUS; }
+    return fn() {
+        state = (state * MULTIPLIER + INCREMENT) % MODULUS;
+        return state;
+    };
+};
+
+# Floats in [0, 1).
+let floats = fn(seed) {
+    let nxt = ints(seed);
+    return fn() { nxt() / 2147483648.0 };
+};
+
+# Floats in [-1, 1) -- handy for initialising neural-network weights.
+let uniform = fn(seed) {
+    let f = floats(seed);
+    return fn() { f() * 2.0 - 1.0 };
+};
+
+# Integers in [lo, hi).
+let range_int = fn(seed, lo, hi) {
+    let nxt = ints(seed);
+    let span = hi - lo;
+    return fn() { lo + nxt() % span };
+};
