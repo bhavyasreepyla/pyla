@@ -227,6 +227,6 @@ matching, auto-indent and comment toggling for `.pyla` and `.fr` files.
 ## Credits
 
 Pyla was created by **Bhavya Sree Pyla**, designed and implemented in
-collaboration with **Claude** (Anthropic's Fable 5 model) via Claude Code.
+collaboration with **Claude**.
 The language-design post-mortems it was built against are documented in
 [DESIGN.md](DESIGN.md). MIT licensed.
