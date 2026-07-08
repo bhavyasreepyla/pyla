@@ -1,0 +1,27 @@
+# Control flow: the classic FizzBuzz, plus break/continue.
+
+for (let i = 1; i <= 20; i = i + 1) {
+    if (i % 15 == 0) {
+        print("FizzBuzz");
+    } else if (i % 3 == 0) {
+        print("Fizz");
+    } else if (i % 5 == 0) {
+        print("Buzz");
+    } else {
+        print(i);
+    }
+}
+
+print("---");
+
+# Sum only the odd numbers below 30, stopping early once we pass 200.
+let total = 0;
+let n = 0;
+while (true) {
+    n = n + 1;
+    if (n >= 30) { break; }
+    if (n % 2 == 0) { continue; }   # skip evens
+    total = total + n;
+    if (total > 200) { break; }
+}
+print("partial odd sum:", total);

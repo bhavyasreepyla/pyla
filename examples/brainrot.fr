@@ -1,0 +1,47 @@
+# brainrot.fr -- Pyla's Gen Z dialect. Files ending in .fr run in
+# brainrot mode automatically (or force it anywhere with --brainrot).
+# Same language, same semantics, different drip.
+
+fr list = import("std/list");
+
+fr fib = cook(n) {
+    vibecheck (n < 2) { yeet n; }
+    yeet fib(n - 1) + fib(n - 2);
+};
+
+yap("fib(15) is lowkey", fib(15));
+
+fr mood = cook(x) {
+    vibecheck (x > 100) {
+        yeet "sheeeesh";
+    } nah vibecheck (x > 10) {
+        yeet "valid";
+    } nah {
+        yeet "mid";
+    }
+};
+
+farm (fr i = 1; i <= 5; i = i + 1) {
+    fr score = i * i * 10;
+    yap("score", score, "is", mood(score));
+}
+
+fr grinding = nocap;
+fr total = 0;
+fr n = 0;
+grind (grinding) {
+    n = n + 1;
+    vibecheck (n % 2 == 0) { skip; }
+    total = total + n;
+    vibecheck (total > 40) { dip; }
+}
+yap("odd grind total:", total);
+
+fr vibes = ["bussin", "mid", "bussin", "bussin", "mid"];
+range(0, len(vibes))
+    |> list.filter(cook(i) { vibes[i] == "bussin" })
+    |> len
+    |> yap;
+
+sheesh(fib(10) == 55, "math is capping");
+yap("no errors? that's nocap fr fr");

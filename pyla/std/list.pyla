@@ -1,0 +1,89 @@
+# std/list -- list utilities, written in Pyla.
+# Usage:  let list = import("std/list");  list.map([1,2,3], fn(x){ x * 2 })
+
+let map = fn(arr, f) {
+    let out = [];
+    for (let i = 0; i < len(arr); i = i + 1) { push(out, f(arr[i])); }
+    return out;
+};
+
+let filter = fn(arr, pred) {
+    let out = [];
+    for (let i = 0; i < len(arr); i = i + 1) {
+        if (pred(arr[i])) { push(out, arr[i]); }
+    }
+    return out;
+};
+
+let reduce = fn(arr, init, f) {
+    let acc = init;
+    for (let i = 0; i < len(arr); i = i + 1) { acc = f(acc, arr[i]); }
+    return acc;
+};
+
+let each = fn(arr, f) {
+    for (let i = 0; i < len(arr); i = i + 1) { f(arr[i]); }
+    return nil;
+};
+
+let sum = fn(arr) { reduce(arr, 0, fn(a, b) { a + b }) };
+
+let product = fn(arr) { reduce(arr, 1, fn(a, b) { a * b }) };
+
+let reverse = fn(arr) {
+    let out = [];
+    for (let i = len(arr) - 1; i >= 0; i = i - 1) { push(out, arr[i]); }
+    return out;
+};
+
+let index_of = fn(arr, item) {
+    for (let i = 0; i < len(arr); i = i + 1) {
+        if (arr[i] == item) { return i; }
+    }
+    return -1;
+};
+
+let any = fn(arr, pred) {
+    for (let i = 0; i < len(arr); i = i + 1) {
+        if (pred(arr[i])) { return true; }
+    }
+    return false;
+};
+
+let all = fn(arr, pred) {
+    for (let i = 0; i < len(arr); i = i + 1) {
+        if (!pred(arr[i])) { return false; }
+    }
+    return true;
+};
+
+# Quicksort. Pass a comparator like fn(a, b) { a < b }, or use sort_asc.
+let sort_by = fn(arr, less) {
+    if (len(arr) <= 1) { return arr; }
+    let pivot = arr[0];
+    let smaller = [];
+    let bigger = [];
+    for (let i = 1; i < len(arr); i = i + 1) {
+        if (less(arr[i], pivot)) {
+            push(smaller, arr[i]);
+        } else {
+            push(bigger, arr[i]);
+        }
+    }
+    let out = sort_by(smaller, less);
+    push(out, pivot);
+    let rest_sorted = sort_by(bigger, less);
+    for (let i = 0; i < len(rest_sorted); i = i + 1) {
+        push(out, rest_sorted[i]);
+    }
+    return out;
+};
+
+let sort = fn(arr) { sort_by(arr, fn(a, b) { a < b }) };
+
+let zip = fn(a, b) {
+    let out = [];
+    let n = min(len(a), len(b));
+    for (let i = 0; i < n; i = i + 1) { push(out, [a[i], b[i]]); }
+    return out;
+};

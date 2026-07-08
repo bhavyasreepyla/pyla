@@ -1,0 +1,34 @@
+# Arrays and hashes, and a tiny word-frequency counter.
+
+let words = ["the", "fox", "the", "dog", "the", "fox"];
+
+let counts = {};
+for (let i = 0; i < len(words); i = i + 1) {
+    let w = words[i];
+    if (contains(counts, w)) {
+        counts[w] = counts[w] + 1;
+    } else {
+        counts[w] = 1;
+    }
+}
+
+print("counts:", counts);
+print("keys:  ", keys(counts));
+print("values:", values(counts));
+print("'the' appears", counts["the"], "times");
+
+# Nested structures.
+let people = [
+    {"name": "Ada",  "age": 36},
+    {"name": "Alan", "age": 41},
+];
+for (let i = 0; i < len(people); i = i + 1) {
+    let p = people[i];
+    print(p["name"], "is", p["age"]);
+}
+
+# Negative indexing works on arrays and strings.
+let letters = ["a", "b", "c", "d"];
+print("last letter:", letters[-1]);
+let msg = "Pyla";
+print("last char:", msg[-1]);

@@ -1,0 +1,88 @@
+{
+  "$schema": "https://raw.githubusercontent.com/martinring/tmlanguage/master/tmlanguage.json",
+  "name": "Pyla",
+  "scopeName": "source.pyla",
+  "patterns": [
+    { "include": "#comments" },
+    { "include": "#strings" },
+    { "include": "#keywords" },
+    { "include": "#constants" },
+    { "include": "#numbers" },
+    { "include": "#function-definition" },
+    { "include": "#builtins" },
+    { "include": "#operators" },
+    { "include": "#function-call" },
+    { "include": "#identifiers" }
+  ],
+  "repository": {
+    "comments": {
+      "match": "#.*$",
+      "name": "comment.line.number-sign.pyla"
+    },
+    "strings": {
+      "begin": "\"",
+      "end": "\"",
+      "name": "string.quoted.double.pyla",
+      "patterns": [
+        {
+          "match": "\\\\[nrt0\"\\\\]",
+          "name": "constant.character.escape.pyla"
+        }
+      ]
+    },
+    "keywords": {
+      "patterns": [
+        {
+          "match": "\\b(if|else|while|for|return|break|continue|vibecheck|nah|grind|farm|yeet|dip|skip)\\b",
+          "name": "keyword.control.pyla"
+        },
+        {
+          "match": "\\b(let|fn|fr|cook)\\b",
+          "name": "storage.type.pyla"
+        },
+        {
+          "match": "\\b(and|or)\\b",
+          "name": "keyword.operator.logical.pyla"
+        }
+      ]
+    },
+    "constants": {
+      "match": "\\b(true|false|nil|nocap|cap|ghosted)\\b",
+      "name": "constant.language.pyla"
+    },
+    "numbers": {
+      "match": "\\b\\d+(\\.\\d+)?\\b",
+      "name": "constant.numeric.pyla"
+    },
+    "function-definition": {
+      "match": "\\b(let)\\s+([A-Za-z_][A-Za-z0-9_]*)\\s*(=)\\s*(fn)\\b",
+      "captures": {
+        "1": { "name": "storage.type.pyla" },
+        "2": { "name": "entity.name.function.pyla" },
+        "3": { "name": "keyword.operator.assignment.pyla" },
+        "4": { "name": "storage.type.function.pyla" }
+      }
+    },
+    "builtins": {
+      "match": "\\b(print|write|len|type|push|pop|first|last|rest|keys|values|contains|delete|str|int|float|range|abs|min|max|chr|ord|input|assert|import|split|join|upper|lower|trim|replace|slice|args|read_file|write_file|append_file|exists|yap|spill|sheesh)(?=\\s*\\()",
+      "name": "support.function.builtin.pyla"
+    },
+    "operators": {
+      "patterns": [
+        { "match": "\\|>", "name": "keyword.operator.pipeline.pyla" },
+        { "match": "==|!=|<=|>=|<|>", "name": "keyword.operator.comparison.pyla" },
+        { "match": "[+\\-*/%]", "name": "keyword.operator.arithmetic.pyla" },
+        { "match": "=", "name": "keyword.operator.assignment.pyla" },
+        { "match": "!", "name": "keyword.operator.logical.pyla" }
+      ]
+    },
+    "function-call": {
+      "match": "\\b([A-Za-z_][A-Za-z0-9_]*)(?=\\s*\\()",
+      "name": "entity.name.function.call.pyla"
+    },
+    "identifiers": {
+      "match": "\\b[A-Za-z_][A-Za-z0-9_]*\\b",
+      "name": "variable.other.pyla"
+    }
+  }
+}

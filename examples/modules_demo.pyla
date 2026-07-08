@@ -1,0 +1,39 @@
+# The module system and dot access.
+# import() loads a .pyla file once (cached) and returns its top-level
+# bindings as a hash; `mod.name` is sugar for mod["name"].
+
+let list = import("std/list");
+let math = import("std/math");
+
+let nums = range(1, 11);
+print("squares:  ", list.map(nums, fn(x) { x * x }));
+print("evens sum:", list.sum(list.filter(nums, fn(x) { x % 2 == 0 })));
+print("sorted:   ", list.sort([5, 3, 9, 1, 7]));
+print("reversed: ", list.reverse(nums));
+
+print("sqrt(2)   =", math.sqrt(2));
+print("pi        =", math.pi);
+print("2^10      =", math.pow(2, 10));
+print("gcd(84,36)=", math.gcd(84, 36));
+print("10!       =", math.factorial(10));
+print("primes:   ", list.filter(range(2, 30), math.is_prime));
+
+# Dot access + closures give you struct-like objects with methods.
+let make_point = fn(x, y) {
+    let self = {"x": x, "y": y};
+    self["dist"] = fn(other) {
+        math.sqrt(math.pow(self.x - other.x, 2) + math.pow(self.y - other.y, 2))
+    };
+    return self;
+};
+
+let a = make_point(0, 0);
+let b = make_point(3, 4);
+print("distance  =", a.dist(b));   # 5.0
+
+# String toolkit.
+let csv = "pyla, is , a,language ";
+let fields = list.map(split(csv, ","), trim);
+print("fields:   ", fields);
+print("joined:   ", join(fields, " | "));
+print("loud:     ", upper(join(fields, " ")));

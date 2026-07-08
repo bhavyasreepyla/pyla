@@ -1,0 +1,54 @@
+# A Brainfuck interpreter written in Pyla.
+#
+# This is the "does the language actually work" stress test: it uses arrays as
+# a mutable tape, a stack for bracket matching, string indexing, closures over
+# shared state, and nested loops -- all at once. If it prints "Hello World!",
+# the interpreter underneath is real.
+
+let run_bf = fn(program) {
+    # Precompute matching-bracket jump targets with a stack.
+    let jumps = {};
+    let stack = [];
+    for (let i = 0; i < len(program); i = i + 1) {
+        let c = program[i];
+        if (c == "[") {
+            push(stack, i);
+        } else if (c == "]") {
+            let open = pop(stack);
+            jumps[open] = i;
+            jumps[i] = open;
+        }
+    }
+
+    # 30,000 cells of zeroed tape.
+    let tape = [];
+    for (let i = 0; i < 30000; i = i + 1) { push(tape, 0); }
+
+    let ptr = 0;
+    let ip = 0;
+    let out = "";
+
+    while (ip < len(program)) {
+        let c = program[ip];
+        if (c == ">") {
+            ptr = ptr + 1;
+        } else if (c == "<") {
+            ptr = ptr - 1;
+        } else if (c == "+") {
+            tape[ptr] = (tape[ptr] + 1) % 256;
+        } else if (c == "-") {
+            tape[ptr] = (tape[ptr] + 255) % 256;
+        } else if (c == ".") {
+            out = out + chr(tape[ptr]);
+        } else if (c == "[") {
+            if (tape[ptr] == 0) { ip = jumps[ip]; }
+        } else if (c == "]") {
+            if (tape[ptr] != 0) { ip = jumps[ip]; }
+        }
+        ip = ip + 1;
+    }
+    return out;
+};
+
+let hello = "++++++++[>++++[>++>+++>+++>+<<<<-]>+>+>->>+[<]<-]>>.>---.+++++++..+++.>>.<-.<.+++.------.--------.>>+.>++.";
+print(run_bf(hello));

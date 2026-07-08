@@ -1,0 +1,29 @@
+{
+  "name": "pyla",
+  "displayName": "Pyla Language",
+  "description": "Syntax highlighting for the Pyla programming language",
+  "version": "0.4.0",
+  "publisher": "pyla-lang",
+  "license": "MIT",
+  "engines": {
+    "vscode": "^1.50.0"
+  },
+  "categories": ["Programming Languages"],
+  "contributes": {
+    "languages": [
+      {
+        "id": "pyla",
+        "aliases": ["Pyla", "pyla"],
+        "extensions": [".pyla", ".fr"],
+        "configuration": "./language-configuration.json"
+      }
+    ],
+    "grammars": [
+      {
+        "language": "pyla",
+        "scopeName": "source.pyla",
+        "path": "./syntaxes/pyla.tmLanguage.json"
+      }
+    ]
+  }
+}

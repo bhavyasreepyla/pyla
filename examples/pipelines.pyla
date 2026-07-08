@@ -1,0 +1,35 @@
+# The pipeline operator |> is Pyla's signature feature.
+# `x |> f(a)` means `f(x, a)`: the value flows left to right through
+# each stage, so data transformations read in the order they happen.
+
+let list = import("std/list");
+let math = import("std/math");
+
+# Without pipelines (inside-out, read it backwards):
+print(list.sum(list.map(list.filter(range(1, 21), fn(x) { x % 2 == 0 }), fn(x) { x * x })));
+
+# With pipelines (left to right, the order you'd say it out loud):
+range(1, 21)
+    |> list.filter(fn(x) { x % 2 == 0 })
+    |> list.map(fn(x) { x * x })
+    |> list.sum()
+    |> print;
+
+# Text processing reads like a recipe.
+"  The quick BROWN fox,  jumps over, the LAZY dog  "
+    |> trim
+    |> lower
+    |> split(",")
+    |> list.map(trim)
+    |> join(" / ")
+    |> print;
+
+# Pipelines compose with everything else.
+range(2, 50)
+    |> list.filter(math.is_prime)
+    |> list.reverse()
+    |> slice(0, 5)
+    |> print;
+
+let shout = fn(s) { upper(s) + "!" };
+"pyla is a real language now" |> shout |> print;

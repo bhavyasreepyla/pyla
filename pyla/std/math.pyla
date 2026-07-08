@@ -1,0 +1,88 @@
+# std/math -- math utilities, written in Pyla.
+# Usage:  let math = import("std/math");  math.sqrt(2)
+
+let pi = 3.141592653589793;
+let e = 2.718281828459045;
+
+let floor = fn(x) {
+    let i = int(x);
+    if (x < 0 and float(i) != float(x)) { return i - 1; }
+    return i;
+};
+
+let ceil = fn(x) {
+    let i = int(x);
+    if (x > 0 and float(i) != float(x)) { return i + 1; }
+    return i;
+};
+
+let round = fn(x) { floor(x + 0.5) };
+
+# Integer exponent power (exponentiation by squaring).
+let pow = fn(base, exp) {
+    if (exp < 0) { return 1 / pow(base, -exp); }
+    let result = 1;
+    let b = base;
+    let n = exp;
+    while (n > 0) {
+        if (n % 2 == 1) { result = result * b; }
+        b = b * b;
+        n = n / 2;
+        n = int(n);
+    }
+    return result;
+};
+
+# Square root by Newton's method.
+let sqrt = fn(x) {
+    if (x < 0) { assert(false, "sqrt of negative number"); }
+    if (x == 0) { return 0.0; }
+    let guess = float(x);
+    for (let i = 0; i < 50; i = i + 1) {
+        let next = (guess + x / guess) / 2.0;
+        if (abs(next - guess) < 0.000000000001) { return next; }
+        guess = next;
+    }
+    return guess;
+};
+
+let gcd = fn(a, b) {
+    let x = abs(a);
+    let y = abs(b);
+    while (y != 0) {
+        let t = y;
+        y = x % y;
+        x = t;
+    }
+    return x;
+};
+
+let lcm = fn(a, b) {
+    if (a == 0 or b == 0) { return 0; }
+    return abs(a * b) / gcd(a, b);
+};
+
+let factorial = fn(n) {
+    assert(n >= 0, "factorial of negative number");
+    let result = 1;
+    for (let i = 2; i <= n; i = i + 1) { result = result * i; }
+    return result;
+};
+
+let clamp = fn(x, lo, hi) {
+    if (x < lo) { return lo; }
+    if (x > hi) { return hi; }
+    return x;
+};
+
+let is_prime = fn(n) {
+    if (n < 2) { return false; }
+    if (n < 4) { return true; }
+    if (n % 2 == 0) { return false; }
+    let i = 3;
+    while (i * i <= n) {
+        if (n % i == 0) { return false; }
+        i = i + 2;
+    }
+    return true;
+};

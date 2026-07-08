@@ -1,0 +1,40 @@
+# Higher-order functions: map, filter and reduce built in Pyla itself.
+
+let map = fn(arr, f) {
+    let out = [];
+    for (let i = 0; i < len(arr); i = i + 1) {
+        push(out, f(arr[i]));
+    }
+    return out;
+};
+
+let filter = fn(arr, pred) {
+    let out = [];
+    for (let i = 0; i < len(arr); i = i + 1) {
+        if (pred(arr[i])) { push(out, arr[i]); }
+    }
+    return out;
+};
+
+let reduce = fn(arr, init, f) {
+    let acc = init;
+    for (let i = 0; i < len(arr); i = i + 1) {
+        acc = f(acc, arr[i]);
+    }
+    return acc;
+};
+
+let nums = range(1, 11);                       # [1..10]
+print("nums:   ", nums);
+
+let squares = map(nums, fn(x) { x * x });
+print("squares:", squares);
+
+let evens = filter(nums, fn(x) { x % 2 == 0 });
+print("evens:  ", evens);
+
+let total = reduce(nums, 0, fn(a, b) { a + b });
+print("sum:    ", total);                      # 55
+
+let product = reduce(range(1, 6), 1, fn(a, b) { a * b });
+print("5! =    ", product);                    # 120

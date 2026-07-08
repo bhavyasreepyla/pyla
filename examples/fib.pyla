@@ -1,0 +1,30 @@
+# Recursion: naive and iterative Fibonacci.
+
+let fib = fn(n) {
+    if (n < 2) { return n; }
+    return fib(n - 1) + fib(n - 2);
+};
+
+print("Recursive fib(0..10):");
+for (let i = 0; i <= 10; i = i + 1) {
+    write(fib(i));
+    write(" ");
+}
+print("");
+
+# Iterative version, returns the whole sequence as an array.
+let fib_seq = fn(count) {
+    let out = [];
+    let a = 0;
+    let b = 1;
+    for (let i = 0; i < count; i = i + 1) {
+        push(out, a);
+        let next = a + b;
+        a = b;
+        b = next;
+    }
+    return out;
+};
+
+print("Iterative fib sequence (15):");
+print(fib_seq(15));

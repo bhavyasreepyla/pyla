@@ -1,0 +1,26 @@
+[build-system]
+requires = ["setuptools>=64"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pyla-lang"
+version = "0.4.0"
+description = "Pyla: a small pipeline-first scripting language (with an optional Gen Z dialect, no cap)"
+readme = "README.md"
+requires-python = ">=3.9"
+license = { file = "LICENSE" }
+authors = [{ name = "Bhavya Sree Pyla" }]
+keywords = ["interpreter", "language", "bytecode", "vm", "pratt-parser", "pipeline"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Topic :: Software Development :: Interpreters",
+]
+
+[project.scripts]
+pyla = "pyla.cli:main"
+
+[tool.setuptools]
+packages = ["pyla"]
+
+[tool.setuptools.package-data]
+pyla = ["std/*.pyla"]
