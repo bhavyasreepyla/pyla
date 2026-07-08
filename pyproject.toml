@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pyla-lang"
-version = "0.4.0"
+version = "0.4.1"
 description = "Pyla: a small pipeline-first scripting language (with an optional Gen Z dialect, no cap)"
 readme = "README.md"
 requires-python = ">=3.9"
@@ -15,6 +15,11 @@ classifiers = [
     "Programming Language :: Python :: 3",
     "Topic :: Software Development :: Interpreters",
 ]
+
+[project.urls]
+Homepage = "https://github.com/bhavyasreepyla/pyla"
+Source = "https://github.com/bhavyasreepyla/pyla"
+Issues = "https://github.com/bhavyasreepyla/pyla/issues"
 
 [project.scripts]
 pyla = "pyla.cli:main"
