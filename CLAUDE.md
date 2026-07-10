@@ -114,6 +114,18 @@ Dot access (`h.key`) is parser-level sugar for `h["key"]` — no engine code.
   engine), `pyla` console command (installed editable), VS Code extension
   for `.pyla`/`.fr` (installed locally), brainfuck-in-Pyla proof, trained
   tinylm model. PyPI name `pyla-lang` verified available (July 2026).
+- v0.6.0: the **pipeline flight recorder** — `pyla --trace` prints the value
+  leaving every `|>` stage of an unmodified program (parser tags pipe calls
+  with `pipe_text`; evaluator hooks eval_call, VM emits a TRACE_PIPE opcode
+  after pipe CALLs; `diagnostics.TRACE_PIPES` is the switch; output goes to
+  stderr; `tests/test_trace.py` enforces engine-identical traces). Also
+  `--terse-errors` (one-line errors, added for the bench's error-richness
+  sweep). PYLA_EXPLAINED.md is the user's personal reference doc.
+- First pyla-bench results (sibling session): 100% fix rate with AND without
+  SPEC.md (ceiling effect), but a strategy shift — spec condition cites the
+  spec; no-spec condition runs experiments in Pyla to learn semantics
+  empirically. Requested next: .fr task variants, multi-file bugs, error-
+  richness sweep.
 - Harness contract (for the pyla-bench experiment planned with the sibling
   project in `C:\Users\Pylab\desktop\ME\more`): exit codes 0/1/2 are the
   grading interface; `assert` exits 1 with a message; `pyla test dir/` runs

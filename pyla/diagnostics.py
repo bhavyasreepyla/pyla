@@ -1,9 +1,25 @@
-"""Human-friendly error reporting.
+"""Human-friendly error reporting and the pipeline flight recorder.
 
 Walter Bright's rule: error messages are the quality of implementation.
 Instead of a bare message, the CLI shows the offending source line, a caret
 at the column (when known), and the Pyla call stack for runtime errors.
+
+The flight recorder (`pyla --trace`) prints the value leaving every |>
+pipeline stage of an UNMODIFIED program to stderr. Both engines honour it.
 """
+
+import sys
+
+# Toggled by the CLI's --trace flag.
+TRACE_PIPES = False
+
+
+def trace_pipe(line, stage, value):
+    """Report one pipeline stage: the value that just flowed out of it."""
+    text = value.inspect()
+    if len(text) > 72:
+        text = text[:69] + "..."
+    sys.stderr.write(f"|> line {line:>3}: {stage}  =>  {text}\n")
 
 
 def format_error(e, source, filename="<input>"):

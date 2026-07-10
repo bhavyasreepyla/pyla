@@ -9,6 +9,8 @@ complete reference: everything the language does is described here.
 pyla program.pyla          # run a file
 pyla -c "print(1 + 2)"     # run a string
 pyla test dir/             # run every .pyla file in dir as a test
+pyla --trace program.pyla  # also print the value leaving every |> stage
+pyla --terse-errors x.pyla # one-line errors (no source line/caret/stack)
 ```
 
 Exit codes: `0` = ran to completion; `1` = parse error, runtime error, or

@@ -11,6 +11,7 @@ variables are shared by reference and remain mutable.
 """
 
 from . import compiler as C
+from . import diagnostics
 from . import objects as obj
 from .objects import NIL, TRUE, FALSE, bool_obj
 from .environment import Environment
@@ -232,5 +233,8 @@ def _dispatch(stack, frames):
             frame.envs.append(Environment(outer=frame.envs[-1]))
         elif op == C.POP_ENV:
             frame.envs.pop()
+        elif op == C.TRACE_PIPE:
+            if diagnostics.TRACE_PIPES:
+                diagnostics.trace_pipe(line, arg, stack[-1])
         else:
             raise PylaRuntimeError(f"unknown opcode: {op}", line)

@@ -417,8 +417,12 @@ class Parser:
         right = self.parse_expression(PIPELINE)
         if isinstance(right, ast.CallExpression):
             right.arguments.insert(0, left)
+            right.pipe_text = getattr(right.function, "dot_text",
+                                      None) or str(right.function)
             return right
-        return ast.CallExpression(function=right, arguments=[left], line=line)
+        return ast.CallExpression(function=right, arguments=[left], line=line,
+                                  pipe_text=getattr(right, "dot_text",
+                                                    None) or str(right))
 
     def parse_dot_expression(self, left):
         # `a.b` is sugar for `a["b"]`, so both engines support it for free.
@@ -426,7 +430,10 @@ class Parser:
         if not self._expect_peek(T.IDENT):
             return None
         name = ast.StringLiteral(self.cur_token.literal, self.cur_token.line)
-        return ast.IndexExpression(left=left, index=name, line=line)
+        expr = ast.IndexExpression(left=left, index=name, line=line)
+        # Remember the dotted spelling so --trace can label pipe stages nicely.
+        expr.dot_text = f"{left}.{name.value}"
+        return expr
 
     def parse_array_literal(self):
         line = self.cur_token.line

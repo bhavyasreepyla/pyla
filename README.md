@@ -154,9 +154,25 @@ break;   continue;
 
 ### Diagnostics
 Errors show the offending source line with a caret (parse errors) and a full
-Pyla call stack (runtime errors) — from both engines, identically. See
-[DESIGN.md](DESIGN.md) for the design rationale and the language post-mortems
-Pyla was built against.
+Pyla call stack (runtime errors) — from both engines, identically
+(`--terse-errors` switches to bare one-liners). See [DESIGN.md](DESIGN.md)
+for the design rationale and the language post-mortems Pyla was built against.
+
+### The pipeline flight recorder (`--trace`)
+Run any **unmodified** program with `pyla --trace` and Pyla reports the value
+flowing out of every `|>` stage, labeled with its source line:
+
+```
+|> line  13: list.filter  =>  [2, 4, 6, 8, 10, 12, 14, 16, 18, 20]
+|> line  14: list.map     =>  [4, 16, 36, 64, 100, 144, 196, 256, 324, 400]
+|> line  15: list.sum     =>  1540
+```
+
+The #1 documented pain in debugging data pipelines is seeing intermediate
+values. Elixir's `dbg` comes closest, but requires editing the code to insert
+the call. Pyla's recorder is a CLI flag on untouched source, honoured
+identically by both engines — and because Pyla is fully deterministic, a
+trace *is* a faithful replay of the run.
 
 ### Brainrot mode (the Gen Z dialect)
 Pyla ships with an optional slang dialect. Files ending in `.fr` enable it

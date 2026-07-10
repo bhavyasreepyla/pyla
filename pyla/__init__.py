@@ -12,7 +12,7 @@ from .evaluator import evaluate
 from .environment import Environment
 from .errors import ParseError, PylaRuntimeError
 
-__version__ = "0.5.0"
+__version__ = "0.6.0"
 
 
 def parse(source, slang=False):

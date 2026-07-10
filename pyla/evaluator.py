@@ -373,7 +373,12 @@ def _assign_index(container, index, value, line):
 def eval_call(node, env):
     function = eval_node(node.function, env)
     args = [eval_node(a, env) for a in node.arguments]
-    return apply_function(function, args, node.line)
+    result = apply_function(function, args, node.line)
+    if node.pipe_text:
+        from . import diagnostics
+        if diagnostics.TRACE_PIPES:
+            diagnostics.trace_pipe(node.line, node.pipe_text, result)
+    return result
 
 
 def apply_function(function, args, line):

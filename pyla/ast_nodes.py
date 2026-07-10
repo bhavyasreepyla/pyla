@@ -213,6 +213,9 @@ class CallExpression(Node):
     function: "Node"
     arguments: List["Node"]
     line: int = 0
+    # Set by the parser when this call was written as a |> stage; the trace
+    # mode (`pyla --trace`) uses it to label the value leaving the stage.
+    pipe_text: str = ""
 
     def __str__(self):
         args = ", ".join(str(a) for a in self.arguments)

@@ -5,8 +5,11 @@ Usage:
     pyla script.pyla            # run a program (bytecode VM, the default)
     pyla script.fr              # .fr files run in brainrot mode automatically
     pyla test dir/              # run every .pyla/.fr file in dir as a test
+    pyla --trace script.pyla    # flight recorder: show the value leaving
+                                #   every |> stage (no code changes needed)
     pyla --walk script.pyla     # run on the tree-walking evaluator instead
     pyla --brainrot script.pyla # force the Gen Z dialect on any file
+    pyla --terse-errors x.pyla  # one-line errors (no caret/stack context)
     pyla -c "print(1 + 2)"      # run a one-liner
     pyla --zen                  # the Way of the Pipe
     pyla --version
@@ -39,7 +42,8 @@ The Way of the Pipe                        ~ pyla --zen
 """
 
 
-def run_source(source, filename="<input>", use_vm=True, slang=False):
+def run_source(source, filename="<input>", use_vm=True, slang=False,
+               terse=False):
     if use_vm:
         from .vm import vm_run
         runner = vm_run
@@ -48,8 +52,11 @@ def run_source(source, filename="<input>", use_vm=True, slang=False):
     try:
         runner(source, slang=slang)
     except PylaError as e:
-        from .diagnostics import format_error
-        sys.stderr.write(format_error(e, source, filename) + "\n")
+        if terse:
+            sys.stderr.write(f"{filename}: {e}\n")
+        else:
+            from .diagnostics import format_error
+            sys.stderr.write(format_error(e, source, filename) + "\n")
         return 1
     return 0
 
@@ -112,7 +119,12 @@ def main(argv=None):
 
     use_vm = "--walk" not in args
     slang = "--brainrot" in args
-    args = [a for a in args if a not in ("--walk", "--vm", "--brainrot")]
+    terse = "--terse-errors" in args
+    if "--trace" in args:
+        from . import diagnostics
+        diagnostics.TRACE_PIPES = True
+    args = [a for a in args if a not in ("--walk", "--vm", "--brainrot",
+                                         "--trace", "--terse-errors")]
 
     if not args:
         repl.start(__version__)
@@ -137,7 +149,7 @@ def main(argv=None):
             return 2
         from . import builtins
         builtins.SCRIPT_ARGS[:] = args[2:]
-        return run_source(args[1], "<-c>", use_vm, slang)
+        return run_source(args[1], "<-c>", use_vm, slang, terse)
 
     path = args[0]
     from . import builtins
@@ -153,7 +165,7 @@ def main(argv=None):
         slang = True  # fr fr
     # Imports in the script resolve relative to the script's own directory.
     modules.set_base_dir(os.path.dirname(os.path.abspath(path)))
-    return run_source(source, path, use_vm, slang)
+    return run_source(source, path, use_vm, slang, terse)
 
 
 if __name__ == "__main__":

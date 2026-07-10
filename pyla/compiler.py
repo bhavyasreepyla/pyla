@@ -40,6 +40,7 @@ RET = 21
 CLOSURE = 22     # arg: constant-pool index of a CompiledFunction
 PUSH_ENV = 23    # enter a child scope (for-loop header)
 POP_ENV = 24     # leave it
+TRACE_PIPE = 25  # arg: stage text; reports stack top when --trace is on
 
 
 @dataclass
@@ -235,6 +236,8 @@ class Compiler:
             for arg in node.arguments:
                 self.compile_expression(arg)
             self.emit(CALL, len(node.arguments), line)
+            if node.pipe_text:
+                self.emit(TRACE_PIPE, node.pipe_text, line)
         elif t is ast.ArrayLiteral:
             for e in node.elements:
                 self.compile_expression(e)
