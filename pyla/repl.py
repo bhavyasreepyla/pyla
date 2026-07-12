@@ -24,7 +24,9 @@ Commands: :help  :env  :zen  :brainrot  :quit
 HELP = """\
 Pyla quick reference:
   let x = 10;                 declare a variable
+  "hi ${x}"                   string interpolation (any expression)
   fn(a, b) { a + b }          a function literal (closures supported)
+  attempt(fn() { risky() })   catch errors as {ok, value, error}
   if (c) { .. } else { .. }   conditional (an expression)
   while (c) { .. }            loop; also for (i=0; i<n; i=i+1) { .. }
   [1, 2, 3]     {"a": 1}      arrays and hashes (h.key sugar for h["key"])

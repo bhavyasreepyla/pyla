@@ -22,6 +22,41 @@ def trace_pipe(line, stage, value):
     sys.stderr.write(f"|> line {line:>3}: {stage}  =>  {text}\n")
 
 
+def closest_name(name, candidates):
+    """Return the candidate most likely to be a typo of `name`, or None.
+
+    Uses edit distance with a threshold that scales with the name's length,
+    so short names only match near-exact typos. Powers the "did you mean"
+    hints on identifier-not-found errors (the Elm/Rust lesson)."""
+    best, best_dist = None, 3
+    max_dist = 1 if len(name) <= 4 else 2
+    for cand in candidates:
+        if abs(len(cand) - len(name)) > max_dist:
+            continue
+        d = _edit_distance(name, cand, max_dist)
+        if d is not None and d < best_dist and d <= max_dist:
+            best, best_dist = cand, d
+    return best
+
+
+def _edit_distance(a, b, cap):
+    """Levenshtein distance, bailing out early once it must exceed cap."""
+    if a == b:
+        return 0
+    prev = list(range(len(b) + 1))
+    for i, ca in enumerate(a, 1):
+        cur = [i]
+        row_min = i
+        for j, cb in enumerate(b, 1):
+            cur.append(min(prev[j] + 1, cur[j - 1] + 1,
+                           prev[j - 1] + (ca != cb)))
+            row_min = min(row_min, cur[j])
+        if row_min > cap:
+            return None
+        prev = cur
+    return prev[-1]
+
+
 def format_error(e, source, filename="<input>"):
     parts = [f"{filename}: {e}"]
     lines = source.splitlines()

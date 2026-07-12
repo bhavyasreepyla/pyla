@@ -88,7 +88,9 @@ def _dispatch(stack, frames):
             else:
                 b = BUILTINS.get(arg)
                 if b is None:
-                    raise PylaRuntimeError(f"identifier not found: {arg}", line)
+                    from .evaluator import name_error_message
+                    raise PylaRuntimeError(
+                        name_error_message(arg, frame.envs[-1]), line)
                 stack.append(b)
         elif op == C.BINARY:
             b = stack.pop()

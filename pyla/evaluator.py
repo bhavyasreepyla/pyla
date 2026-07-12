@@ -150,7 +150,24 @@ def eval_identifier(node, env):
     from .builtins import BUILTINS
     if node.value in BUILTINS:
         return BUILTINS[node.value]
-    raise PylaRuntimeError(f"identifier not found: {node.value}", node.line)
+    raise PylaRuntimeError(
+        name_error_message(node.value, env), node.line)
+
+
+def name_error_message(name, env):
+    """Shared by both engines so 'did you mean' hints stay byte-identical."""
+    from .builtins import BUILTINS
+    from .diagnostics import closest_name
+    candidates = set(BUILTINS)
+    e = env
+    while e is not None:
+        candidates.update(e.store)
+        e = e.outer
+    hint = closest_name(name, candidates)
+    message = f"identifier not found: {name}"
+    if hint:
+        message += f" (did you mean '{hint}'?)"
+    return message
 
 
 def eval_prefix(operator, right, line):

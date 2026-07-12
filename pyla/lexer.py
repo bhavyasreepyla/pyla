@@ -156,22 +156,65 @@ class Lexer:
         return Token(T.FLOAT if is_float else T.INT, literal, line, col)
 
     def _read_string(self, line: int, col: int) -> Token:
-        # self.ch is the opening quote
+        # self.ch is the opening quote. Strings may contain ${expr}
+        # interpolations; those produce an INTERP token carrying the
+        # literal/expression segments for the parser to desugar.
         self._read_char()
         chars = []
+        segments = []
         while self.ch != '"':
             if self.ch == "":
                 return Token(T.ILLEGAL, "unterminated string", line, col)
             if self.ch == "\\":
                 self._read_char()
                 escapes = {"n": "\n", "t": "\t", "r": "\r",
-                           '"': '"', "\\": "\\", "0": "\0"}
+                           '"': '"', "\\": "\\", "0": "\0", "$": "$"}
                 chars.append(escapes.get(self.ch, self.ch))
+            elif self.ch == "$" and self._peek_char() == "{":
+                if chars:
+                    segments.append(("str", "".join(chars)))
+                    chars = []
+                self._read_char()  # on '{'
+                self._read_char()  # first char of the expression
+                expr_chars = []
+                depth = 1
+                in_str = False
+                escaped = False
+                while True:
+                    if self.ch == "":
+                        return Token(T.ILLEGAL,
+                                     "unterminated interpolation", line, col)
+                    if in_str:
+                        if escaped:
+                            escaped = False
+                        elif self.ch == "\\":
+                            escaped = True
+                        elif self.ch == '"':
+                            in_str = False
+                    else:
+                        if self.ch == '"':
+                            in_str = True
+                        elif self.ch == "{":
+                            depth += 1
+                        elif self.ch == "}":
+                            depth -= 1
+                            if depth == 0:
+                                break
+                    expr_chars.append(self.ch)
+                    self._read_char()
+                # self.ch is the closing '}'; the loop-bottom advance eats it.
+                segments.append(("expr", "".join(expr_chars)))
             else:
                 chars.append(self.ch)
             self._read_char()
         self._read_char()  # consume closing quote
-        return Token(T.STRING, "".join(chars), line, col)
+        if not segments:
+            return Token(T.STRING, "".join(chars), line, col)
+        if chars:
+            segments.append(("str", "".join(chars)))
+        tok = Token(T.INTERP, "<interpolated string>", line, col)
+        tok.segments = segments
+        return tok
 
     def tokens(self):
         """Yield all tokens including the final EOF (useful for tests)."""

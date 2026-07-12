@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pyla-lang"
-version = "0.6.0"
+version = "0.7.0"
 description = "Pyla: a small pipeline-first scripting language (with an optional Gen Z dialect, no cap)"
 readme = "README.md"
 requires-python = ">=3.9"

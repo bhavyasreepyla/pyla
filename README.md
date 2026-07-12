@@ -77,7 +77,7 @@ python tinylm.py sample --temp 0.8 -n 400 --prompt "let fib = "
 
 ```
 # variables and functions are declared with `let`
-let greet = fn(name) { "Hello, " + name + "!" };
+let greet = fn(name) { "Hello, ${name}!" };   # string interpolation
 print(greet("world"));
 
 # recursion
@@ -149,13 +149,18 @@ break;   continue;
 ### Builtins
 `print` `write` `len` `type` `push` `pop` `first` `last` `rest` `keys` `values`
 `contains` `delete` `str` `int` `float` `range` `abs` `min` `max` `chr` `ord`
-`input` `assert` `import` `split` `join` `upper` `lower` `trim` `replace`
-`slice` `args` `read_file` `write_file` `append_file` `exists`.
+`input` `assert` `attempt` `import` `split` `join` `upper` `lower` `trim`
+`replace` `slice` `args` `read_file` `write_file` `append_file` `exists`.
+
+Strings interpolate: `"hi ${name}, total=${a + b}"` (any expression works
+inside `${...}`). Errors can be caught as values:
+`attempt(fn() { risky() })` returns `{"ok": ..., "value": ..., "error": ...}`.
 
 ### Diagnostics
 Errors show the offending source line with a caret (parse errors) and a full
 Pyla call stack (runtime errors) — from both engines, identically
-(`--terse-errors` switches to bare one-liners). See [DESIGN.md](DESIGN.md)
+(`--terse-errors` switches to bare one-liners). Typos get Elm-style hints:
+`identifier not found: countr (did you mean 'counter'?)`. See [DESIGN.md](DESIGN.md)
 for the design rationale and the language post-mortems Pyla was built against.
 
 ### The pipeline flight recorder (`--trace`)

@@ -114,6 +114,14 @@ Dot access (`h.key`) is parser-level sugar for `h["key"]` — no engine code.
   engine), `pyla` console command (installed editable), VS Code extension
   for `.pyla`/`.fr` (installed locally), brainfuck-in-Pyla proof, trained
   tinylm model. PyPI name `pyla-lang` verified available (July 2026).
+- v0.7.0 ("the lovable release", built from loved-language research: Elm/Rust
+  error UX, interpolation ubiquity): **string interpolation** `"hi ${expr}"`
+  (lexer emits INTERP token with segments; parser desugars to `+`/`str()`
+  chains — zero engine code, works in both), **did-you-mean hints** on
+  identifier-not-found (`diagnostics.closest_name`, shared by both engines
+  via `evaluator.name_error_message` so messages stay byte-identical), and
+  **attempt(f)** builtin (errors as values: `{ok, value, error}` hash).
+  `\$` escapes interpolation; `$` alone is literal. 107 tests.
 - v0.6.0: the **pipeline flight recorder** — `pyla --trace` prints the value
   leaving every `|>` stage of an unmodified program (parser tags pipe calls
   with `pipe_text`; evaluator hooks eval_call, VM emits a TRACE_PIPE opcode

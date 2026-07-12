@@ -393,6 +393,26 @@ def _b_assert(args, line):
     return NIL
 
 
+def _b_attempt(args, line):
+    """Call a zero-argument function, catching any runtime error.
+
+    Returns {"ok": bool, "value": result-or-nil, "error": message-or-nil},
+    turning errors into ordinary values you can inspect and pipe."""
+    _check_arity("attempt", args, line, 1)
+    from .evaluator import apply_function
+    h = obj.Hash()
+    try:
+        value = apply_function(args[0], [], line)
+        h.set(obj.String("ok"), bool_obj(True))
+        h.set(obj.String("value"), value)
+        h.set(obj.String("error"), NIL)
+    except PylaRuntimeError as e:
+        h.set(obj.String("ok"), bool_obj(False))
+        h.set(obj.String("value"), NIL)
+        h.set(obj.String("error"), obj.String(e.message))
+    return h
+
+
 def _make(name, fn):
     return obj.Builtin(fn=fn, name=name)
 
@@ -435,4 +455,5 @@ BUILTINS = {
     "max": _make("max", _b_max),
     "input": _make("input", _b_input),
     "assert": _make("assert", _b_assert),
+    "attempt": _make("attempt", _b_attempt),
 }

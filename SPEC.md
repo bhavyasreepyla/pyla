@@ -28,6 +28,9 @@ all truthy.
   `7 / 2` is float `3.5`. Any operation mixing int and float yields float.
 - `/` or `%` by zero is a runtime error.
 - Strings are immutable; `+` concatenates; comparisons are lexicographic.
+- **Interpolation:** `"hi ${name}, sum=${a + b}"` — any single expression may
+  appear inside `${...}`; its value is converted with `str()` and spliced in.
+  `\${` escapes a literal `${`; a lone `$` needs no escape.
 
 ## Variables
 
@@ -144,6 +147,7 @@ collection is always the first parameter so everything pipes.
 | `slice(x, start)` / `slice(x, start, end)` | sub-array/substring, Python-style |
 | `input()` / `input(prompt)` | read a line from stdin (`nil` on EOF) |
 | `assert(cond)` / `assert(cond, msg)` | runtime error (exit 1) if cond is falsy |
+| `attempt(f)` | call zero-arg `f`, catching errors: returns `{"ok": bool, "value": v-or-nil, "error": msg-or-nil}` |
 | `args()` | command-line arguments as an array of strings |
 | `read_file(p)` / `write_file(p, s)` / `append_file(p, s)` / `exists(p)` | file I/O |
 | `import(path)` | load a module (see Modules) |
@@ -159,6 +163,9 @@ prog.pyla: Runtime error [line 2]: type mismatch: int + string
   Pyla call stack (outermost first):
     in outer (called at line 6)
 ```
+
+When an unknown identifier closely resembles a defined name or builtin, the
+error appends a hint: `identifier not found: countr (did you mean 'counter'?)`.
 
 Common error messages: `identifier not found: NAME`, `type mismatch: T op T`,
 `division by zero`, `NAME expected N argument(s), got M`,

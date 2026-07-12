@@ -11,6 +11,7 @@ IDENT = "IDENT"
 INT = "INT"
 FLOAT = "FLOAT"
 STRING = "STRING"
+INTERP = "INTERP"   # a string containing ${...} interpolations
 
 # Operators
 ASSIGN = "="

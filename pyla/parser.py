@@ -59,6 +59,7 @@ class Parser:
             T.INT: self.parse_integer_literal,
             T.FLOAT: self.parse_float_literal,
             T.STRING: self.parse_string_literal,
+            T.INTERP: self.parse_interp_string,
             T.TRUE: self.parse_boolean,
             T.FALSE: self.parse_boolean,
             T.NIL: self.parse_nil,
@@ -308,6 +309,39 @@ class Parser:
 
     def parse_string_literal(self):
         return ast.StringLiteral(self.cur_token.literal, self.cur_token.line)
+
+    def parse_interp_string(self):
+        # "a ${x} b" desugars to "a " + str(x) + " b", so interpolation
+        # works on both engines with no runtime support at all.
+        line = self.cur_token.line
+        node = None
+        for kind, text in self.cur_token.segments:
+            if kind == "str":
+                part = ast.StringLiteral(text, line)
+            else:
+                sub = Parser(text, self.lexer.slang)
+                program = sub.parse_program()
+                if sub.errors:
+                    self._error(f"in interpolation ${{{text}}}: "
+                                f"{sub.errors[0].message}")
+                    part = ast.StringLiteral("", line)
+                elif (len(program.statements) != 1 or
+                      not isinstance(program.statements[0],
+                                     ast.ExpressionStatement)):
+                    self._error("interpolation must contain a single "
+                                f"expression: ${{{text}}}")
+                    part = ast.StringLiteral("", line)
+                else:
+                    inner = program.statements[0].expression
+                    part = ast.CallExpression(
+                        function=ast.Identifier("str", line),
+                        arguments=[inner], line=line)
+            if node is None:
+                node = part
+            else:
+                node = ast.InfixExpression(left=node, operator="+",
+                                           right=part, line=line)
+        return node if node is not None else ast.StringLiteral("", line)
 
     def parse_boolean(self):
         return ast.BooleanLiteral(self._cur_is(T.TRUE), self.cur_token.line)
