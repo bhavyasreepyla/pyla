@@ -12,3 +12,6 @@ tinylm_model.npz
 
 # Local Claude Code settings
 .claude/settings.local.json
+
+# Personal reference doc - private, never commit
+PYLA_EXPLAINED.md
